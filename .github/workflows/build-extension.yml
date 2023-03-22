@@ -16,7 +16,7 @@ on:
 jobs:
   build-layer-amd64:
     runs-on: ubuntu-latest
-    if: contains(github.event.release.tag_name, 'v')
+    # if: contains(github.event.release.tag_name, 'v')
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -44,7 +44,7 @@ jobs:
           echo ::set-output name=layer-arn::$layer_arn
   build-layer-arm64:
     runs-on: ubuntu-latest
-    if: contains(github.event.release.tag_name, 'v')
+    # if: contains(github.event.release.tag_name, 'v')
     needs: build-layer-amd64
     steps:
       - name: Checkout code
