@@ -7,6 +7,12 @@ on:
     payload:
       owner: open-policy-agent
       repo: opa
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "OPA release tag name"
+        required: true
+        type: string
 jobs:
   build-layer-amd64:
     runs-on: ubuntu-latest
