@@ -1,0 +1,74 @@
+name: Build and deploy AWS Lambda OPA extension layer
+on:
+  release:
+    types: [published]
+    - repository_dispatch:
+        types: [opa-release-created]
+        payload:
+          owner: open-policy-agent
+          repo: opa
+jobs:
+  build-layer-amd64:
+    runs-on: ubuntu-latest
+    if: contains(github.event.release.tag_name, 'v')
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install zip -y
+        sudo apt-get install awscli -y
+    - name: Download OPA assets (AMD64)
+      run: |
+        curl -L https://github.com/open-policy-agent/opa/releases/download/${{ github.event.release.tag_name }}/opa_linux_amd64_static -o src/opa/opa
+    - name: Build Lambda layer (AMD64)
+      run: |
+        cd src
+        zip -r ../opa-layer-amd64.zip *
+    - name: Create Lambda layer version (AMD64)
+      run: |
+        runtimes=$(aws lambda list-runtimes --query "Runtimes[*]" --output json | tr -d '[],"')
+        layer_arn=$(aws lambda publish-layer-version \
+          --layer-name opa-layer \
+          --description "OPA Layer ${{ github.event.release.tag_name }} (AMD64)" \
+          --zip-file fileb://opa-layer-amd64.zip \
+          --compatible-runtimes $runtimes \
+          --query LayerVersionArn \
+          --output text)
+        echo ::set-output name=layer-arn::$layer_arn
+  build-layer-arm64:
+    runs-on: ubuntu-latest
+    if: contains(github.event.release.tag_name, 'v')
+    needs: build-layer-amd64
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install zip -y
+        sudo apt-get install awscli -y
+    - name: Download OPA assets (ARM64)
+      run: |
+        curl -L https://github.com/open-policy-agent/opa/releases/download/${{ github.event.release.tag_name }}/opa_linux_arm64_static -o src/opa/opa
+    - name: Build Lambda layer (ARM64)
+      run: |
+        cd src
+        zip -r ../opa-layer-arm64.zip *
+    - name: Create Lambda layer version (ARM64)
+      run: |
+        runtimes=$(aws lambda list-runtimes --query "Runtimes[*]" --output json | tr -d '[],"')
+        layer_arn=$(aws lambda publish-layer-version \
+          --layer-name opa-layer \
+          --description "OPA Layer ${{ github.event.release.tag_name }} (ARM64)" \
+          --zip-file fileb://opa-layer-arm64.zip \
+          --compatible-runtimes $runtimes \
+          --query LayerVersionArn \
+          --output text)
+        echo ::set-output name=layer-arn::$layer_arn
+    - name: Deploy to AWS Lambda
+      run: |
+        aws lambda update-function-configuration \
+          --function-name my-lambda-function \
+          --layers ${{needs.build-layer-amd64.outputs.layer-arn}},${{needs.build-layer-arm64.outputs.layer-arn}}
