@@ -18,7 +18,7 @@ env:
 jobs:
   build-layer-amd64:
     runs-on: ubuntu-latest
-    if: ${{ startsWith(vars.TAG_NAME, 'v') }}
+    if: ${{ startsWith(github.event.inputs.tag_name || github.event.release.tag_name, 'v') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -60,7 +60,7 @@ jobs:
           done
   build-layer-arm64:
     runs-on: ubuntu-latest
-    if: ${{ startsWith(vars.TAG_NAME, 'v') }}
+    if: ${{ startsWith(github.event.inputs.tag_name || github.event.release.tag_name, 'v') }}
     needs: build-layer-amd64
     steps:
       - name: Checkout code
