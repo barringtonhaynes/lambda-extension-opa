@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install-y zip awscli jq
+          sudo apt-get install -y zip awscli jq
       - name: Download OPA assets (AMD64)
         run: |
           curl -L https://github.com/open-policy-agent/opa/releases/download/${{ env.TAG_NAME }}/opa_linux_amd64_static -o src/opa/opa
@@ -73,7 +73,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install-y zip awscli jq
+          sudo apt-get install -y zip awscli jq
       - name: Download OPA assets (ARM64)
         run: |
           curl -L https://github.com/open-policy-agent/opa/releases/download/${{ env.TAG_NAME }}/opa_linux_arm64_static -o src/opa/opa
