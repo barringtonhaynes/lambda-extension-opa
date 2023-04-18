@@ -52,7 +52,7 @@ jobs:
               --layer-name opa-layer \
               --description "OPA Layer $TAG_NAME (AMD64)" \
               --license-info "Apache-2.0" \
-              --content S3Bucket=${{ secrets.S3_BUCKET }},S3Key=opa-layer/${{ env.TAG_NAME }}/opa-layer-amd64.zip,Region=eu-west-2 \
+              --zip-file fileb://opa-layer-amd64.zip \
               --compatible-architectures x86_64 \
               --query LayerVersionArn \
               --output text)
@@ -61,7 +61,6 @@ jobs:
   build-layer-arm64:
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.event.inputs.tag_name || github.event.release.tag_name, 'v') }}
-    needs: build-layer-amd64
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -95,7 +94,7 @@ jobs:
               --layer-name opa-layer \
               --description "OPA Layer $TAG_NAME (ARM64)" \
               --license-info "Apache-2.0" \
-              --content S3Bucket=${{ secrets.S3_BUCKET }},S3Key=opa-layer/${{ env.TAG_NAME }}/opa-layer-arm64.zip,Region=eu-west-2 \
+              --zip-file fileb://opa-layer-arm64.zip \
               --compatible-architectures arm64 \
               --query LayerVersionArn \
               --output text)
