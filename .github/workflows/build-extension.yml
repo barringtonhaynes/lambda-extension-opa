@@ -13,12 +13,12 @@ on:
         description: "OPA release tag name"
         required: true
         type: string
+env:
+  TAG_NAME: ${{ github.event.inputs.tag_name || github.event.release.tag_name }}
 jobs:
   build-layer-amd64:
     runs-on: ubuntu-latest
-    env:
-      TAG_NAME: ${{ github.event.inputs.tag_name || github.event.release.tag_name }}
-    if: contains(env.TAG_NAME, 'v')
+    if: ${{ startsWith(vars.TAG_NAME, 'v') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -60,9 +60,7 @@ jobs:
           done
   build-layer-arm64:
     runs-on: ubuntu-latest
-    env:
-      TAG_NAME: ${{ github.event.inputs.tag_name || github.event.release.tag_name }}
-    if: contains(env.TAG_NAME, 'v')
+    if: ${{ startsWith(vars.TAG_NAME, 'v') }}
     needs: build-layer-amd64
     steps:
       - name: Checkout code
