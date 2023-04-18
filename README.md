@@ -2,6 +2,21 @@
 
 This [AWS Lambda extension](https://docs.aws.amazon.com/lambda/latest/dg/lambda-extensions.html) runs an [Open Policy Agent (OPA)](https://www.openpolicyagent.org) sidecar alongside your Lambda function. By using the [sidecar pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar), you can make microservice decisions with local data, keep your code platform-agnostic, and separate policy from code.
 
+## Table of Contents
+
+- [AWS Lambda Extension for Open Policy Agent](#aws-lambda-extension-for-open-policy-agent)
+  - [Table of Contents](#table-of-contents)
+  - [Why Use an OPA Sidecar in AWS Lambda?](#why-use-an-opa-sidecar-in-aws-lambda)
+    - [1. Microservice Decisions with Local Data](#1-microservice-decisions-with-local-data)
+    - [2. Platform-Agnostic Code](#2-platform-agnostic-code)
+    - [3. Separation of Policy and Code](#3-separation-of-policy-and-code)
+  - [Installation and Usage](#installation-and-usage)
+    - [Environment variables](#environment-variables)
+    - [Published layers](#published-layers)
+  - [Shell script](#shell-script)
+  - [Contributing](#contributing)
+  - [License](#license)
+
 ## Why Use an OPA Sidecar in AWS Lambda?
 
 There are several benefits to using an OPA sidecar in AWS Lambda:
@@ -32,6 +47,13 @@ The following environment are available. You should set `OPA_POLICY_PATH` to poi
 | ---------------------- | ---------------------------- | ------------------------------------------------|
 | OPA_POLICY_PATH        | /opt/extensions/opa/policies | Policy file path. Defaults to test policy path. |
 | OPA_LOGS_TO_CLOUDWATCH | false                        | Send OPA logs to Cloudwatch if set to `true`    |
+
+### Published layers
+
+Pre-built layers are available in the following regions:
+
+<!-- LAYERS_TABLE_START -->
+<!-- LAYERS_TABLE_END -->
 
 ## Shell script
 

@@ -15,6 +15,8 @@ on:
         type: string
 env:
   TAG_NAME: ${{ github.event.inputs.tag_name || github.event.release.tag_name }}
+  # AWS_REGIONS: "us-east-1,us-east-2,us-west-1,us-west-2,af-south-1,ap-east-1,ap-south-1,ap-northeast-3,ap-northeast-2,ap-southeast-1,ap-southeast-2,ap-northeast-1,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-south-1,eu-west-3,eu-north-1,me-south-1,sa-east-1"
+  AWS_REGIONS: "eu-west-2,us-east-1"
 jobs:
   build-layer-amd64:
     runs-on: ubuntu-latest
@@ -25,8 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install zip -y
-          sudo apt-get install awscli -y
+          sudo apt-get install-y zip awscli jq
       - name: Download OPA assets (AMD64)
         run: |
           curl -L https://github.com/open-policy-agent/opa/releases/download/${{ env.TAG_NAME }}/opa_linux_amd64_static -o src/opa/opa
@@ -45,7 +46,7 @@ jobs:
           aws s3 cp opa-layer-amd64.zip s3://${{ secrets.S3_BUCKET }}/opa-layer/${{ env.TAG_NAME }}/opa-layer-amd64.zip
       - name: Create Lambda layer version (AMD64)
         run: |
-          aws_regions=("us-east-1" "us-east-2" "us-west-1" "us-west-2" "af-south-1" "ap-east-1" "ap-south-1" "ap-northeast-3" "ap-northeast-2" "ap-southeast-1" "ap-southeast-2" "ap-northeast-1" "ca-central-1" "eu-central-1" "eu-west-1" "eu-west-2" "eu-south-1" "eu-west-3" "eu-north-1" "me-south-1" "sa-east-1")
+          echo '{}' > layer-arns-amd64.json
           for region in "${aws_regions[@]}"; do
             layer_arn=$(aws lambda publish-layer-version \
               --region $region \
@@ -56,8 +57,13 @@ jobs:
               --compatible-architectures x86_64 \
               --query LayerVersionArn \
               --output text)
-            echo ::set-output name=layer-arn::$layer_arn
+            jq --arg region "$region" --arg arn "$layer_arn" '. + { ($region): $arn }' layer-arns-amd64.json > layer-arns-amd64.json.tmp && mv layer-arns-amd64.json.tmp layer-arns-amd64.json
           done
+      - name: Upload layer ARNs JSON as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: layer-arns-amd64
+          path: layer-arns-amd64.json
   build-layer-arm64:
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.event.inputs.tag_name || github.event.release.tag_name, 'v') }}
@@ -67,8 +73,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install zip -y
-          sudo apt-get install awscli -y
+          sudo apt-get install-y zip awscli jq
       - name: Download OPA assets (ARM64)
         run: |
           curl -L https://github.com/open-policy-agent/opa/releases/download/${{ env.TAG_NAME }}/opa_linux_arm64_static -o src/opa/opa
@@ -87,7 +92,7 @@ jobs:
           aws s3 cp opa-layer-arm64.zip s3://${{ secrets.S3_BUCKET }}/opa-layer/${{ env.TAG_NAME }}/opa-layer-arm64.zip
       - name: Create Lambda layer version (ARM64)
         run: |
-          aws_regions=("us-east-1" "us-east-2" "us-west-1" "us-west-2" "af-south-1" "ap-east-1" "ap-south-1" "ap-northeast-3" "ap-northeast-2" "ap-southeast-1" "ap-southeast-2" "ap-northeast-1" "ca-central-1" "eu-central-1" "eu-west-1" "eu-west-2" "eu-south-1" "eu-west-3" "eu-north-1" "me-south-1" "sa-east-1")
+          echo '{}' > layer-arns-arm64.json
           for region in "${aws_regions[@]}"; do
             layer_arn=$(aws lambda publish-layer-version \
               --region $region \
@@ -98,5 +103,54 @@ jobs:
               --compatible-architectures arm64 \
               --query LayerVersionArn \
               --output text)
-            echo ::set-output name=layer-arn::$layer_arn
+            jq --arg region "$region" --arg arn "$layer_arn" '. + { ($region): $arn }' layer-arns-arm64.json > layer-arns-arm64.json.tmp && mv layer-arns-arm64.json.tmp layer-arns-arm64.json
           done
+      - name: Upload layer ARNs JSON as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: layer-arns-arm64
+          path: layer-arns-arm64.json
+  update-readme:
+    needs: [build-layer-amd64, build-layer-arm64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+      - name: Download layer ARNs JSON files
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Update README.md with new layer ARNs
+        run: |
+          #!/bin/bash
+          set -e
+          echo "Generating layers table"
+          
+          echo "<!-- LAYERS_TABLE_START -->" > layers_table.md
+          echo "| Region | x86_64 | arm64 |" >> layers_table.md
+          echo "| ------ | ------ | ----- |" >> layers_table.md
+
+          jq -r 'to_entries[] | .key' artifacts/layer-arns-amd64.json | while read -r region; do
+            x86_arn=$(jq -r --arg region "$region" '.[$region]' artifacts/layer-arns-amd64.json)
+            arm64_arn=$(jq -r --arg region "$region" '.[$region]' artifacts/layer-arns-arm64.json)
+            ...
+          done
+
+          echo "<!-- LAYERS_TABLE_END -->" >> layers_table.md
+
+          echo "Replacing layers table in README.md"
+          sed -i -e '/<!-- LAYERS_TABLE_START -->/,/<!-- LAYERS_TABLE_END -->/{//!d;}' README.md
+          sed -i -e '/<!-- LAYERS_TABLE_START -->/r layers_table.md' README.md
+
+          echo "Layers table updated in README.md"
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update layers table in README.md" || echo "No changes to commit"
+          git push
