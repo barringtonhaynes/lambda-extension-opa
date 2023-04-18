@@ -16,7 +16,7 @@ on:
 jobs:
   build-layer-amd64:
     runs-on: ubuntu-latest
-    # if: contains(github.event.release.tag_name, 'v')
+    if: contains(coalesce(github.event.inputs.tag_name, github.event.release.tag_name), 'v')
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -27,24 +27,38 @@ jobs:
           sudo apt-get install awscli -y
       - name: Download OPA assets (AMD64)
         run: |
-          curl -L https://github.com/open-policy-agent/opa/releases/download/${{ github.event.release.tag_name }}/opa_linux_amd64_static -o src/opa/opa
+          curl -L https://github.com/open-policy-agent/opa/releases/download/$(coalesce(github.event.inputs.tag_name, github.event.release.tag_name))/opa_linux_amd64_static -o src/opa/opa
       - name: Build Lambda layer (AMD64)
         run: |
           cd src
           zip -r ../opa-layer-amd64.zip *
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+      - name: Upload layer to S3
+        run: |
+          aws s3 cp ../opa-layer-amd64.zip s3://${{ secrets.S3_BUCKET }}/opa-layer/${{ env.GITHUB_RUN_ID }}/opa-layer-amd64.zip
       - name: Create Lambda layer version (AMD64)
         run: |
-          layer_arn=$(aws lambda publish-layer-version \
-            --layer-name opa-layer \
-            --description "OPA Layer ${{ github.event.release.tag_name }} (AMD64)" \
-            --zip-file fileb://opa-layer-amd64.zip \
-            --compatible-architectures x86_64 \
-            --query LayerVersionArn \
-            --output text)
-          echo ::set-output name=layer-arn::$layer_arn
+          aws_regions=("us-east-1" "us-east-2" "us-west-1" "us-west-2" "af-south-1" "ap-east-1" "ap-south-1" "ap-northeast-3" "ap-northeast-2" "ap-southeast-1" "ap-southeast-2" "ap-northeast-1" "ca-central-1" "eu-central-1" "eu-west-1" "eu-west-2" "eu-south-1" "eu-west-3" "eu-north-1" "me-south-1" "sa-east-1")
+          for region in "${aws_regions[@]}"; do
+            layer_arn=$(aws lambda publish-layer-version \
+              --region $region \
+              --layer-name opa-layer \
+              --description "OPA Layer $(coalesce(github.event.inputs.tag_name, github.event.release.tag_name)) (AMD64)" \
+              --license-info "Apache-2.0" \
+              --content S3Bucket=${{ secrets.S3_BUCKET }},S3Key=opa-layer/${{ env.GITHUB_RUN_ID }}/opa-layer-amd64.zip \
+              --compatible-architectures x86_64 \
+              --query LayerVersionArn \
+              --output text)
+            echo ::set-output name=layer-arn::$layer_arn
+          done
   build-layer-arm64:
     runs-on: ubuntu-latest
-    # if: contains(github.event.release.tag_name, 'v')
+    if: contains(coalesce(github.event.inputs.tag_name, github.event.release.tag_name), 'v')
     needs: build-layer-amd64
     steps:
       - name: Checkout code
@@ -56,23 +70,32 @@ jobs:
           sudo apt-get install awscli -y
       - name: Download OPA assets (ARM64)
         run: |
-          curl -L https://github.com/open-policy-agent/opa/releases/download/${{ github.event.release.tag_name }}/opa_linux_arm64_static -o src/opa/opa
+          curl -L https://github.com/open-policy-agent/opa/releases/download/$(coalesce(github.event.inputs.tag_name, github.event.release.tag_name))/opa_linux_arm64_static -o src/opa/opa
       - name: Build Lambda layer (ARM64)
         run: |
           cd src
           zip -r ../opa-layer-arm64.zip *
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+      - name: Upload layer to S3
+        run: |
+          aws s3 cp ../opa-layer-arm64.zip s3://${{ secrets.S3_BUCKET }}/opa-layer/${{ env.GITHUB_RUN_ID }}/opa-layer-arm64.zip
       - name: Create Lambda layer version (ARM64)
         run: |
-          layer_arn=$(aws lambda publish-layer-version \
-            --layer-name opa-layer \
-            --description "OPA Layer ${{ github.event.release.tag_name }} (ARM64)" \
-            --zip-file fileb://opa-layer-arm64.zip \
-            --compatible-architectures arm64 \
-            --query LayerVersionArn \
-            --output text)
-          echo ::set-output name=layer-arn::$layer_arn
-      - name: Deploy to AWS Lambda
-        run: |
-          aws lambda update-function-configuration \
-            --function-name my-lambda-function \
-            --layers ${{needs.build-layer-amd64.outputs.layer-arn}},${{needs.build-layer-arm64.outputs.layer-arn}}
+          aws_regions=("us-east-1" "us-east-2" "us-west-1" "us-west-2" "af-south-1" "ap-east-1" "ap-south-1" "ap-northeast-3" "ap-northeast-2" "ap-southeast-1" "ap-southeast-2" "ap-northeast-1" "ca-central-1" "eu-central-1" "eu-west-1" "eu-west-2" "eu-south-1" "eu-west-3" "eu-north-1" "me-south-1" "sa-east-1")
+          for region in "${aws_regions[@]}"; do
+            layer_arn=$(aws lambda publish-layer-version \
+              --region $region \
+              --layer-name opa-layer \
+              --description "OPA Layer $(coalesce(github.event.inputs.tag_name, github.event.release.tag_name)) (ARM64)" \
+              --license-info "Apache-2.0" \
+              --content S3Bucket=${{ secrets.S3_BUCKET }},S3Key=opa-layer/${{ env.GITHUB_RUN_ID }}/opa-layer-arm64.zip \
+              --compatible-architectures arm64 \
+              --query LayerVersionArn \
+              --output text)
+            echo ::set-output name=layer-arn::$layer_arn
+          done
