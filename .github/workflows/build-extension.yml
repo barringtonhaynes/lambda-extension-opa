@@ -50,7 +50,7 @@ jobs:
             layer_arn=$(aws lambda publish-layer-version \
               --region $region \
               --layer-name opa-layer \
-              --description "OPA Layer $(coalesce(github.event.inputs.tag_name, github.event.release.tag_name)) (AMD64)" \
+              --description "OPA Layer $TAG_NAME (AMD64)" \
               --license-info "Apache-2.0" \
               --content S3Bucket=${{ secrets.S3_BUCKET }},S3Key=opa-layer/${{ env.TAG_NAME }}/opa-layer-amd64.zip \
               --compatible-architectures x86_64 \
@@ -93,7 +93,7 @@ jobs:
             layer_arn=$(aws lambda publish-layer-version \
               --region $region \
               --layer-name opa-layer \
-              --description "OPA Layer $(coalesce(github.event.inputs.tag_name, github.event.release.tag_name)) (ARM64)" \
+              --description "OPA Layer $TAG_NAME (ARM64)" \
               --license-info "Apache-2.0" \
               --content S3Bucket=${{ secrets.S3_BUCKET }},S3Key=opa-layer/${{ env.TAG_NAME }}/opa-layer-arm64.zip \
               --compatible-architectures arm64 \
