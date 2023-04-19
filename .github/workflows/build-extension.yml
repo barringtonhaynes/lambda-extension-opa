@@ -155,8 +155,11 @@ jobs:
           echo "Layers table updated in README.md"
       - name: Commit and push changes
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@users.noreply.github.com"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add README.md
-          git commit -m "Update layers table in README.md" || echo "No changes to commit"
-          git push
+          git commit -m ":memo: Update layers table in README.md" || echo "No changes to commit"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ github.head_ref }}
