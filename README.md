@@ -58,6 +58,7 @@ Pre-built layers are available in the following regions:
 | ------ | ------ | ----- |
 <!-- LAYERS_TABLE_END -->
 <!-- LAYERS_TABLE_END -->
+<!-- LAYERS_TABLE_END -->
 
 ## Shell script
 
