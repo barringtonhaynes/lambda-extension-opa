@@ -47,8 +47,9 @@ jobs:
       - name: Create Lambda layer version (AMD64)
         run: |
           echo '{}' > layer-arns-amd64.json
-          aws_regions=(${{ env.AWS_REGIONS }})
+          IFS=',' read -ra aws_regions <<< "${{ env.AWS_REGIONS }}"
           for region in "${aws_regions[@]}"; do
+            trap 'echo "Error publishing layer version in region $region. Continuing..."' ERR
             layer_arn=$(aws lambda publish-layer-version \
               --region $region \
               --layer-name opa-layer \
@@ -59,6 +60,7 @@ jobs:
               --query LayerVersionArn \
               --output text)
             jq --arg region "$region" --arg arn "$layer_arn" '. + { ($region): $arn }' layer-arns-amd64.json > layer-arns-amd64.json.tmp && mv layer-arns-amd64.json.tmp layer-arns-amd64.json
+            trap - ERR
           done
       - name: Upload layer ARNs JSON as artifact
         uses: actions/upload-artifact@v2
@@ -94,8 +96,9 @@ jobs:
       - name: Create Lambda layer version (ARM64)
         run: |
           echo '{}' > layer-arns-arm64.json
-          aws_regions=(${{ env.AWS_REGIONS }})
+          IFS=',' read -ra aws_regions <<< "${{ env.AWS_REGIONS }}"
           for region in "${aws_regions[@]}"; do
+            trap 'echo "Error publishing layer version in region $region. Continuing..."' ERR
             layer_arn=$(aws lambda publish-layer-version \
               --region $region \
               --layer-name opa-layer \
@@ -106,6 +109,7 @@ jobs:
               --query LayerVersionArn \
               --output text)
             jq --arg region "$region" --arg arn "$layer_arn" '. + { ($region): $arn }' layer-arns-arm64.json > layer-arns-arm64.json.tmp && mv layer-arns-arm64.json.tmp layer-arns-arm64.json
+            trap - ERR
           done
       - name: Upload layer ARNs JSON as artifact
         uses: actions/upload-artifact@v2
