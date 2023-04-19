@@ -72,7 +72,7 @@ jobs:
       - name: Upload layer ARNs JSON as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: layer-arns-amd64
+          name: layer-arns
           path: layer-arns-amd64.json
   build-layer-arm64:
     runs-on: ubuntu-latest
@@ -130,7 +130,7 @@ jobs:
       - name: Upload layer ARNs JSON as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: layer-arns-arm64
+          name: layer-arns
           path: layer-arns-arm64.json
   update-readme:
     needs: [build-layer-amd64, build-layer-arm64]
@@ -143,9 +143,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq
       - name: Download layer ARNs JSON files
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
-          path: artifacts
+          name: layer-arns
       - name: Update README.md with new layer ARNs
         run: |
           #!/bin/bash
