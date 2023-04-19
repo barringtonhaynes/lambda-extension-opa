@@ -63,7 +63,7 @@ jobs:
             version_number=$(echo "$layer_arn" | awk -F: '{print $NF}')
             aws lambda add-layer-version-permission \
               --layer-name opa-layer \
-              --statement-id xaccount \
+              --statement-id "opa-layer-amd64-$region-$version_number" \
               --action lambda:GetLayerVersion  \
               --principal '*' \
               --version-number $version_number
@@ -122,7 +122,7 @@ jobs:
             version_number=$(echo "$layer_arn" | awk -F: '{print $NF}')
             aws lambda add-layer-version-permission \
               --layer-name opa-layer \
-              --statement-id xaccount \
+              --statement-id "opa-layer-arm64-$region-$version_number" \
               --action lambda:GetLayerVersion  \
               --principal '*' \
               --version-number $version_number
