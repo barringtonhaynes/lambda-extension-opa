@@ -23,7 +23,7 @@ jobs:
     if: ${{ startsWith(github.event.inputs.tag_name || github.event.release.tag_name, 'v') }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -36,7 +36,7 @@ jobs:
           cd src
           zip -r ../opa-layer-amd64.zip *
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -63,7 +63,7 @@ jobs:
             trap - ERR
           done
       - name: Upload layer ARNs JSON as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: layer-arns-amd64
           path: layer-arns-amd64.json
@@ -72,7 +72,7 @@ jobs:
     if: ${{ startsWith(github.event.inputs.tag_name || github.event.release.tag_name, 'v') }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -85,7 +85,7 @@ jobs:
           cd src
           zip -r ../opa-layer-arm64.zip *
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -112,7 +112,7 @@ jobs:
             trap - ERR
           done
       - name: Upload layer ARNs JSON as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: layer-arns-arm64
           path: layer-arns-arm64.json
@@ -121,7 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: |
           sudo apt-get update
