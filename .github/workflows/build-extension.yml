@@ -151,18 +151,15 @@ jobs:
           #!/bin/bash
           set -e
           echo "Generating layers table"
-          
-          echo "<!-- LAYERS_TABLE_START -->" > layers_table.md
-          echo "| Region | x86_64 | arm64 |" >> layers_table.md
+
+          echo "| Region | x86_64 | arm64 |" > layers_table.md
           echo "| ------ | ------ | ----- |" >> layers_table.md
 
-          jq -r 'to_entries[] | .key' layer-arns/layer-arns-amd64.json | while read -r region; do
-            x86_arn=$(jq -r --arg region "$region" '.[$region]' layer-arns/layer-arns-amd64.json)
-            arm64_arn=$(jq -r --arg region "$region" '.[$region]' layer-arns/layer-arns-arm64.json)
-            ...
+          jq -r 'to_entries[] | .key' layer-arns-amd64.json | while read -r region; do
+            x86_arn=$(jq -r --arg region "$region" '.[$region]' layer-arns-amd64.json)
+            arm64_arn=$(jq -r --arg region "$region" '.[$region]' layer-arns-arm64.json)
+            echo "| ${region} | ${x86_arn} | ${arm64_arn} |" >> layers_table.md
           done
-
-          echo "<!-- LAYERS_TABLE_END -->" >> layers_table.md
 
           echo "Replacing layers table in README.md"
           sed -i -e '/<!-- LAYERS_TABLE_START -->/,/<!-- LAYERS_TABLE_END -->/{//!d;}' README.md
