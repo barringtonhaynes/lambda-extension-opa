@@ -81,7 +81,7 @@ if [ "${OPA_LOGS_TO_CLOUDWATCH:-false}" = "true" ]; then
   /opt/${LAMBDA_EXTENSION_NAME}/opa run \
     --log-level=debug \
     --disable-telemetry \
-    --server "${OPA_POLICY_PATH:-/opt/extensions/opa/policies}" \
+    --server "${OPA_POLICY_PATH:-/opt/opa/policies}" \
     2>&1 | tee "$OPA_OUTPUT" &
 else
   echo "[${LAMBDA_EXTENSION_NAME}] To see OPA logs in CloudWatch, set OPA_LOGS_TO_CLOUDWATCH environment variable to true"
@@ -89,7 +89,7 @@ else
   /opt/${LAMBDA_EXTENSION_NAME}/opa run \
     --log-level=debug \
     --disable-telemetry \
-    --server "${OPA_POLICY_PATH:-/opt/extensions/opa/policies}" \
+    --server "${OPA_POLICY_PATH:-/opt/opa/policies}" \
     > "$OPA_OUTPUT" 2>&1 &
 fi
 

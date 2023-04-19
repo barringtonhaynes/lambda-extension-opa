@@ -45,7 +45,7 @@ The following environment are available. You should set `OPA_POLICY_PATH` to poi
 
 | Environment variable   | Default value                | Description                                     |
 | ---------------------- | ---------------------------- | ------------------------------------------------|
-| OPA_POLICY_PATH        | /opt/extensions/opa/policies | Policy file path. Defaults to test policy path. |
+| OPA_POLICY_PATH        | /opt/opa/policies            | Policy file path. Defaults to test policy path. |
 | OPA_LOGS_TO_CLOUDWATCH | false                        | Send OPA logs to Cloudwatch if set to `true`    |
 
 ### Published layers
