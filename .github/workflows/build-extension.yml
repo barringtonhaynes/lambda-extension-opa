@@ -46,7 +46,7 @@ jobs:
       - name: Create Lambda layer version (AMD64)
         run: |
           echo '{}' > layer-arns-amd64.json
-          runtimes=$(curl -s $RuntimeVersionsURL | jq -r '.shapes.Runtime.enum[]' | tr '\n' ' ')
+          runtimes=$(curl -s $AWS_LAMBDA_RUNTIME_VERSION_URL | jq -r '.shapes.Runtime.enum[]' | tr '\n' ' ')
           aws_regions=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text | tr '\t' ',')
           IFS=',' read -ra aws_regions <<< "$aws_regions"
           for region in "${aws_regions[@]}"; do
@@ -106,7 +106,7 @@ jobs:
       - name: Create Lambda layer version (ARM64)
         run: |
           echo '{}' > layer-arns-arm64.json
-          runtimes=$(curl -s $RuntimeVersionsURL | jq -r '.shapes.Runtime.enum[]' | tr '\n' ' ')
+          runtimes=$(curl -s $AWS_LAMBDA_RUNTIME_VERSION_URL | jq -r '.shapes.Runtime.enum[]' | tr '\n' ' ')
           aws_regions=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text | tr '\t' ',')
           IFS=',' read -ra aws_regions <<< "$aws_regions"
           for region in "${aws_regions[@]}"; do
