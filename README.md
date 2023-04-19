@@ -55,23 +55,23 @@ Pre-built layers are available in the following regions:
 <!-- LAYERS_TABLE_START -->
 | Region | x86_64 | arm64 |
 | ------ | ------ | ----- |
-| ap-south-1 | arn:aws:lambda:ap-south-1:929837356077:layer:opa-layer:13 | arn:aws:lambda:ap-south-1:929837356077:layer:opa-layer:12 |
-| eu-north-1 | arn:aws:lambda:eu-north-1:929837356077:layer:opa-layer:13 | arn:aws:lambda:eu-north-1:929837356077:layer:opa-layer:12 |
-| eu-west-3 | arn:aws:lambda:eu-west-3:929837356077:layer:opa-layer:12 | arn:aws:lambda:eu-west-3:929837356077:layer:opa-layer:11 |
-| eu-west-2 | arn:aws:lambda:eu-west-2:929837356077:layer:opa-layer:15 | arn:aws:lambda:eu-west-2:929837356077:layer:opa-layer:14 |
-| eu-west-1 | arn:aws:lambda:eu-west-1:929837356077:layer:opa-layer:12 | arn:aws:lambda:eu-west-1:929837356077:layer:opa-layer:11 |
-| ap-northeast-3 | arn:aws:lambda:ap-northeast-3:929837356077:layer:opa-layer:12 | arn:aws:lambda:ap-northeast-3:929837356077:layer:opa-layer:11 |
-| ap-northeast-2 | arn:aws:lambda:ap-northeast-2:929837356077:layer:opa-layer:12 | arn:aws:lambda:ap-northeast-2:929837356077:layer:opa-layer:11 |
-| ap-northeast-1 | arn:aws:lambda:ap-northeast-1:929837356077:layer:opa-layer:12 | arn:aws:lambda:ap-northeast-1:929837356077:layer:opa-layer:11 |
-| ca-central-1 | arn:aws:lambda:ca-central-1:929837356077:layer:opa-layer:12 | arn:aws:lambda:ca-central-1:929837356077:layer:opa-layer:11 |
-| sa-east-1 | arn:aws:lambda:sa-east-1:929837356077:layer:opa-layer:12 | arn:aws:lambda:sa-east-1:929837356077:layer:opa-layer:11 |
-| ap-southeast-1 | arn:aws:lambda:ap-southeast-1:929837356077:layer:opa-layer:12 | arn:aws:lambda:ap-southeast-1:929837356077:layer:opa-layer:11 |
-| ap-southeast-2 | arn:aws:lambda:ap-southeast-2:929837356077:layer:opa-layer:12 | arn:aws:lambda:ap-southeast-2:929837356077:layer:opa-layer:11 |
-| eu-central-1 | arn:aws:lambda:eu-central-1:929837356077:layer:opa-layer:12 | arn:aws:lambda:eu-central-1:929837356077:layer:opa-layer:11 |
-| us-east-1 | arn:aws:lambda:us-east-1:929837356077:layer:opa-layer:17 | arn:aws:lambda:us-east-1:929837356077:layer:opa-layer:16 |
-| us-east-2 | arn:aws:lambda:us-east-2:929837356077:layer:opa-layer:10 | arn:aws:lambda:us-east-2:929837356077:layer:opa-layer:9 |
-| us-west-1 | arn:aws:lambda:us-west-1:929837356077:layer:opa-layer:10 | arn:aws:lambda:us-west-1:929837356077:layer:opa-layer:9 |
-| us-west-2 | arn:aws:lambda:us-west-2:929837356077:layer:opa-layer:10 | arn:aws:lambda:us-west-2:929837356077:layer:opa-layer:9 |
+| ap-south-1 | arn:aws:lambda:ap-south-1:929837356077:layer:opa-layer:15 | arn:aws:lambda:ap-south-1:929837356077:layer:opa-layer:14 |
+| eu-north-1 | arn:aws:lambda:eu-north-1:929837356077:layer:opa-layer:15 | arn:aws:lambda:eu-north-1:929837356077:layer:opa-layer:14 |
+| eu-west-3 | arn:aws:lambda:eu-west-3:929837356077:layer:opa-layer:14 | arn:aws:lambda:eu-west-3:929837356077:layer:opa-layer:13 |
+| eu-west-2 | arn:aws:lambda:eu-west-2:929837356077:layer:opa-layer:17 | arn:aws:lambda:eu-west-2:929837356077:layer:opa-layer:16 |
+| eu-west-1 | arn:aws:lambda:eu-west-1:929837356077:layer:opa-layer:14 | arn:aws:lambda:eu-west-1:929837356077:layer:opa-layer:13 |
+| ap-northeast-3 | arn:aws:lambda:ap-northeast-3:929837356077:layer:opa-layer:14 | arn:aws:lambda:ap-northeast-3:929837356077:layer:opa-layer:13 |
+| ap-northeast-2 | arn:aws:lambda:ap-northeast-2:929837356077:layer:opa-layer:14 | arn:aws:lambda:ap-northeast-2:929837356077:layer:opa-layer:13 |
+| ap-northeast-1 | arn:aws:lambda:ap-northeast-1:929837356077:layer:opa-layer:14 | arn:aws:lambda:ap-northeast-1:929837356077:layer:opa-layer:13 |
+| ca-central-1 | arn:aws:lambda:ca-central-1:929837356077:layer:opa-layer:14 | arn:aws:lambda:ca-central-1:929837356077:layer:opa-layer:13 |
+| sa-east-1 | arn:aws:lambda:sa-east-1:929837356077:layer:opa-layer:14 | arn:aws:lambda:sa-east-1:929837356077:layer:opa-layer:13 |
+| ap-southeast-1 | arn:aws:lambda:ap-southeast-1:929837356077:layer:opa-layer:14 | arn:aws:lambda:ap-southeast-1:929837356077:layer:opa-layer:13 |
+| ap-southeast-2 | arn:aws:lambda:ap-southeast-2:929837356077:layer:opa-layer:14 | arn:aws:lambda:ap-southeast-2:929837356077:layer:opa-layer:13 |
+| eu-central-1 | arn:aws:lambda:eu-central-1:929837356077:layer:opa-layer:14 | arn:aws:lambda:eu-central-1:929837356077:layer:opa-layer:13 |
+| us-east-1 | arn:aws:lambda:us-east-1:929837356077:layer:opa-layer:19 | arn:aws:lambda:us-east-1:929837356077:layer:opa-layer:18 |
+| us-east-2 | arn:aws:lambda:us-east-2:929837356077:layer:opa-layer:12 | arn:aws:lambda:us-east-2:929837356077:layer:opa-layer:11 |
+| us-west-1 | arn:aws:lambda:us-west-1:929837356077:layer:opa-layer:12 | arn:aws:lambda:us-west-1:929837356077:layer:opa-layer:11 |
+| us-west-2 | arn:aws:lambda:us-west-2:929837356077:layer:opa-layer:11 | arn:aws:lambda:us-west-2:929837356077:layer:opa-layer:12 |
 <!-- LAYERS_TABLE_END -->
 
 ## Shell script
