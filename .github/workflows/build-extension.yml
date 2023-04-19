@@ -15,7 +15,6 @@ on:
         type: string
 env:
   TAG_NAME: ${{ github.event.inputs.tag_name || github.event.release.tag_name }}
-  AWS_LAMBDA_RUNTIME_VERSION_URL: https://raw.githubusercontent.com/boto/botocore/develop/botocore/data/lambda/2015-03-31/service-2.json
 jobs:
   build-layer-amd64:
     runs-on: ubuntu-latest
@@ -46,7 +45,6 @@ jobs:
       - name: Create Lambda layer version (AMD64)
         run: |
           echo '{}' > layer-arns-amd64.json
-          runtimes=$(curl -s $AWS_LAMBDA_RUNTIME_VERSION_URL | jq -r '.shapes.Runtime.enum[]' | tr '\n' ' ')
           aws_regions=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text | tr '\t' ',')
           IFS=',' read -ra aws_regions <<< "$aws_regions"
           for region in "${aws_regions[@]}"; do
@@ -58,7 +56,6 @@ jobs:
               --license-info "Apache-2.0" \
               --zip-file fileb://opa-layer-amd64.zip \
               --compatible-architectures x86_64 \
-              --compatible-runtimes $runtimes \
               --query LayerVersionArn \
               --output text)
             version_number=$(echo "$layer_arn" | awk -F: '{print $NF}')
@@ -106,7 +103,6 @@ jobs:
       - name: Create Lambda layer version (ARM64)
         run: |
           echo '{}' > layer-arns-arm64.json
-          runtimes=$(curl -s $AWS_LAMBDA_RUNTIME_VERSION_URL | jq -r '.shapes.Runtime.enum[]' | tr '\n' ' ')
           aws_regions=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text | tr '\t' ',')
           IFS=',' read -ra aws_regions <<< "$aws_regions"
           for region in "${aws_regions[@]}"; do
@@ -118,7 +114,6 @@ jobs:
               --license-info "Apache-2.0" \
               --zip-file fileb://opa-layer-arm64.zip \
               --compatible-architectures arm64 \
-              --compatible-runtimes $runtimes \
               --query LayerVersionArn \
               --output text)
             version_number=$(echo "$layer_arn" | awk -F: '{print $NF}')
@@ -184,4 +179,3 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
