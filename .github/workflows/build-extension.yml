@@ -15,6 +15,7 @@ on:
         type: string
 env:
   TAG_NAME: ${{ github.event.inputs.tag_name || github.event.release.tag_name }}
+  AWS_LAMBDA_RUNTIME_VERSION_URL: https://raw.githubusercontent.com/boto/botocore/develop/botocore/data/lambda/2015-03-31/service-2.json
 jobs:
   build-layer-amd64:
     runs-on: ubuntu-latest
@@ -45,11 +46,11 @@ jobs:
       - name: Create Lambda layer version (AMD64)
         run: |
           echo '{}' > layer-arns-amd64.json
+          runtimes=$(curl -s $RuntimeVersionsURL | jq -r '.shapes.Runtime.enum[]' | tr '\n' ' ')
           aws_regions=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text | tr '\t' ',')
           IFS=',' read -ra aws_regions <<< "$aws_regions"
           for region in "${aws_regions[@]}"; do
             trap 'echo "Error publishing layer version in region $region. Continuing..."' ERR
-            runtimes=$(aws lambda list-runtimes --region $region --query "Runtimes[*]" --output json | tr -d '[],"')
             layer_arn=$(aws lambda publish-layer-version \
               --region $region \
               --layer-name opa-layer \
@@ -104,11 +105,11 @@ jobs:
       - name: Create Lambda layer version (ARM64)
         run: |
           echo '{}' > layer-arns-arm64.json
+          runtimes=$(curl -s $RuntimeVersionsURL | jq -r '.shapes.Runtime.enum[]' | tr '\n' ' ')
           aws_regions=$(aws ec2 describe-regions --query "Regions[].RegionName" --output text | tr '\t' ',')
           IFS=',' read -ra aws_regions <<< "$aws_regions"
           for region in "${aws_regions[@]}"; do
             trap 'echo "Error publishing layer version in region $region. Continuing..."' ERR
-            runtimes=$(aws lambda list-runtimes --region $region --query "Runtimes[*]" --output json | tr -d '[],"')
             layer_arn=$(aws lambda publish-layer-version \
               --region $region \
               --layer-name opa-layer \
