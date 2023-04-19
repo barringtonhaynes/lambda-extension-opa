@@ -172,7 +172,5 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add README.md
           git commit -m ":memo: Update layers table in README.md" || echo "No changes to commit"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git tag ${{ env.TAG_NAME }}
+          git push
