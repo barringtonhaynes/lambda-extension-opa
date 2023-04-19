@@ -65,7 +65,7 @@ jobs:
               --layer-name opa-layer \
               --statement-id xaccount \
               --action lambda:GetLayerVersion  \
-              --principal '*'' \
+              --principal '*' \
               --version-number $version_number
             jq --arg region "$region" --arg arn "$layer_arn" '. + { ($region): $arn }' layer-arns-amd64.json > layer-arns-amd64.json.tmp && mv layer-arns-amd64.json.tmp layer-arns-amd64.json
             trap - ERR
@@ -124,7 +124,7 @@ jobs:
               --layer-name opa-layer \
               --statement-id xaccount \
               --action lambda:GetLayerVersion  \
-              --principal '*'' \
+              --principal '*' \
               --version-number $version_number
             jq --arg region "$region" --arg arn "$layer_arn" '. + { ($region): $arn }' layer-arns-arm64.json > layer-arns-arm64.json.tmp && mv layer-arns-arm64.json.tmp layer-arns-arm64.json
             trap - ERR
