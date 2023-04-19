@@ -53,6 +53,10 @@ The following environment are available. You should set `OPA_POLICY_PATH` to poi
 Pre-built layers are available in the following regions:
 
 <!-- LAYERS_TABLE_START -->
+<!-- LAYERS_TABLE_START -->
+| Region | x86_64 | arm64 |
+| ------ | ------ | ----- |
+<!-- LAYERS_TABLE_END -->
 <!-- LAYERS_TABLE_END -->
 
 ## Shell script
