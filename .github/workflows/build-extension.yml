@@ -156,9 +156,9 @@ jobs:
           echo "| Region | x86_64 | arm64 |" >> layers_table.md
           echo "| ------ | ------ | ----- |" >> layers_table.md
 
-          jq -r 'to_entries[] | .key' artifacts/layer-arns-amd64.json | while read -r region; do
-            x86_arn=$(jq -r --arg region "$region" '.[$region]' artifacts/layer-arns-amd64.json)
-            arm64_arn=$(jq -r --arg region "$region" '.[$region]' artifacts/layer-arns-arm64.json)
+          jq -r 'to_entries[] | .key' layer-arns/layer-arns-amd64.json | while read -r region; do
+            x86_arn=$(jq -r --arg region "$region" '.[$region]' layer-arns/layer-arns-amd64.json)
+            arm64_arn=$(jq -r --arg region "$region" '.[$region]' layer-arns/layer-arns-arm64.json)
             ...
           done
 
